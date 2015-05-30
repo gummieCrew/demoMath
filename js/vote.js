@@ -17,7 +17,7 @@ var rgbColor;
 function randColor(){
 return Math.floor(Math.random() * 236 + 20 );
 }
-
+/******* this function chooses which ballot the blue, red or green is assigned*****/
 function whichArray(){
   var constant = Math.floor(Math.random()*100);
   var array;
@@ -33,9 +33,6 @@ function whichArray(){
 
 //***********VOTING FUNCTIONS**************************************//
 
-function vote(colorBallot){
-  ballots.push(colorBallot);
-}
 
 function voterData(voterId,ballot){
   this.voterId = voterId;
@@ -103,13 +100,17 @@ for (i=0; i < numberOfBallots; i++){
     
     }
 
-console.log('Green tally:'+greenVote+', Blue tally:'+blueVote+', Red tally:'+redVote); 
+/********** DATA FROM THE VOTING SEQUENCE ***********/ 
 
+console.log('Green tally:'+greenVote+', Blue tally:'+blueVote+', Red tally:'+redVote); 
 
 var numberOfCandidates = Math.floor((redVote/numberOfBallots)*100);
 var quota = Math.floor(numberOfBallots/(numberOfCandidates+1))+1;
 
 console.log('There should be '+numberOfCandidates+' candidates. The quota for each elected official should be '+ quota+' votes.');
+
+
+/***** ELECTION SEQUENCE (STILL WORKING ON IT)**********/	
 
 // if (greenVote>0){
 // 	
