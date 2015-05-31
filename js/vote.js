@@ -15,8 +15,9 @@ var rgbColor;
 
 
 function randColor(){
-return Math.floor(Math.random() * 236 + 20 );
+  return Math.floor(Math.random() * 236 + 20 );
 }
+
 /******* this function chooses which ballot the blue, red or green is assigned*****/
 function whichArray(){
   var constant = Math.floor(Math.random()*100);
@@ -34,10 +35,9 @@ function whichArray(){
 //***********VOTING FUNCTIONS**************************************//
 
 
-function voterData(voterId,ballot){
+function voterData(voterId, ballot){
   this.voterId = voterId;
   this.ballot = vote(ballot);
-
 }
 
 //********DIV FUNCTIONS*********************************************//
@@ -74,33 +74,28 @@ function blueDiv(){
 
 //***************VOTING SEQUENCE************************************************//
 
-
-for (i=0; i < numberOfBallots; i++){
-  var constant = Math.floor(Math.random()*100);
-  
-  if (constant>=41){
-    new voterData(i,greenBallot[whichArray()]);
-    console.log(constant+' ,is greater than 51. Green Vote!')
-    greenVote++;
-  }
-  
-  else if (41>constant && constant>=11 ){
-    new voterData(i,blueBallot[whichArray()]);
-    console.log(constant+' ,is in between 51 and 14. Blue Vote!');
-    blueVote++;
-    
-
-  }
-  else if ((11)>constant){  
-    new voterData(i,redBallot[whichArray()]);
-    console.log(constant+' ,is less than 14. Red Vote!');
-    redVote++;
-  } 
-  
-    
+function votingSequence(){
+  for (i=0; i < numberOfBallots; i++){
+    var constant = Math.floor(Math.random()*100); 
+    if (constant>=41){
+      new voterData(i,greenBallot[whichArray()]);
+      console.log(constant+' ,is greater than 51. Green Vote!')
+      greenVote++;
+    } else if (41>constant && constant>=11 ){
+      new voterData(i,blueBallot[whichArray()]);
+      console.log(constant+' ,is in between 51 and 14. Blue Vote!');
+      blueVote++;  
+    } else if ((11)>constant){  
+      new voterData(i,redBallot[whichArray()]);
+      console.log(constant+' ,is less than 14. Red Vote!');
+      redVote++;
     }
+  }
+}
 
 /********** DATA FROM THE VOTING SEQUENCE ***********/ 
+
+votingSequence();
 
 console.log('Green tally:'+greenVote+', Blue tally:'+blueVote+', Red tally:'+redVote); 
 
