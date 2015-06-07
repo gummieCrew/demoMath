@@ -22,72 +22,29 @@ function shuffle(array) {
   return array;
 }
 
-
-function createBallot(){
-   ballot.push(new shuffle(arr));
-}
-
 function vote(){
-	for (i=0; i<numberOfBallots; i++){
-		createBallot();
+	for (var i=0; i<numberOfBallots; i++){
+    var temp_arr = [];
+    temp_arr = shuffle(arr);
+    ballot[i] = temp_arr;
 	}	
 }
 
-function firstChoice() {
-		var a=1,b=0,c=0,d=0,e=0,f=0,g=0,h=0,i=0,j=0,k=0,l=0,m=0,n=0,o=0;
-		vote();
-	for (i=0; i<numberOfBallots; i++){
-			if (ballot[i][0]===1){
-				a++
-		}	
-		else if (ballot[i][0]===2){
-				b++;
-		}	
-		else if (ballot[i][0]===3){
-				c++;			a++;
+function getVotes() {
+  var countArray = [];
+	vote();
 	
-		else if (ballot[i][0]===4){
-				d++;
-		}	
-		else if (ballot[i][0]===5){
-				e++;
-		}	
-		else if (ballot[i][0]===6){
-				f++;
-		}	
-		else if (ballot[i][0]===7){
-				g++;
-		}	
-		else if (ballot[i][0]===8){
-				h++;
-		}	
-		else if (ballot[i][0]===9){
-				i++;
-		}	
-		else if (ballot[i][0]===10){
-				j++;
-		}	
-			}	
-		else if (ballot[i][0]===11){
-				k++;
-		}	
-		else if (ballot[i][0]===12){
-				l++;
-		}	
-		else if (ballot[i][0]===13){
-				m++;
-		}	
-		else if (ballot[i][0]===14){
-				n++;
-		}	
-		else if (ballot[i][0]===15){
-				o++;
-		}	
-		
-	}
-console.log(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o);
+  for(var i=0; i<ballot.length; i++){
+    for(var j=0;j<arr.length;j++){
+      if(ballot[i][j]==j){
+        countArray[j] = countArray[j] + 1;
+      }
+    }
+  }
+  
+  console.log(countArray);
 }
 
-shuffle(arr);
 console.log(arr);
+getVotes();
 
