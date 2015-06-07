@@ -1,16 +1,8 @@
 var ballots = [];                        
-var blueBallot = [[2,3,1],[2,1,3]];
-var redBallot = [[3,2,1],[3,1,2]];
-var greenBallot = [[1,2,3],[1,3,2]];
 var numberOfBallots = 5489;
 var greenVote = 0;
 var blueVote = 0;
 var redVote = 0;
-var red;
-var green;
-var blue;
-var rgbColor;
-
 
 
 
@@ -34,6 +26,9 @@ function whichArray(){
 
 //***********VOTING FUNCTIONS**************************************//
 
+function vote(colorBallot){
+  ballots.push(colorBallot);
+}
 
 function voterData(voterId, ballot){
   this.voterId = voterId;
@@ -44,6 +39,7 @@ function voterData(voterId, ballot){
 
 
 function redDiv(){
+	var rgbColor;
   red = 255;
   green = randColor();
   blue = green;
@@ -53,6 +49,7 @@ function redDiv(){
 }
 
 function greenDiv(){
+	var rgbColor;
   green = 255;
   red = randColor();
   blue = red;
@@ -63,6 +60,7 @@ function greenDiv(){
 
 
 function blueDiv(){
+	var rgbColor;
   blue = 255;
   red = randColor();
   green = red;
@@ -76,8 +74,11 @@ function blueDiv(){
 
 function votingSequence(){
   for (i=0; i < numberOfBallots; i++){
-    var constant = Math.floor(Math.random()*100); 
-    if (constant>=41){
+    var constant = Math.floor(Math.random()*100);
+    var blueBallot = [[2,3,1],[2,1,3]];
+		 var redBallot = [[3,2,1],[3,1,2]];
+		 var greenBallot = [[1,2,3],[1,3,2]];
+ 	  if (constant>=41){
       new voterData(i,greenBallot[whichArray()]);
       console.log(constant+' ,is greater than 51. Green Vote!')
       greenVote++;
@@ -124,12 +125,6 @@ console.log('There should be '+numberOfCandidates+' candidates. The quota for ea
 // 
 // 
 // 
-
-
-
-
-
-
 
 
 
