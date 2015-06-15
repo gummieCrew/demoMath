@@ -1,5 +1,25 @@
+
+/*********************** VARIABLES ***************************************/
+
 var numberOfCand = 15;
+var electOff = [];
+var defeatOff = [];
 var ballot = [];
+var countArray = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+var maxBallot = [];
+var minBallot = [];
+
+
+
+/******** USED TO SORT BALLOTS PROPERLY ****************************************/
+// arr = [2,11,1,3] arr.sort() = [1,11,2,3], arr.sort(compareNumbers) = [1,2,3,11]
+
+function compareNumbers(a, b) {
+  	return a - b;
+}
+
+/*********************** MAKES RANDOM BALLOT***********************************/
+// Eventually we will will generate ballots using jquery in the web page
 
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex ;
@@ -20,11 +40,11 @@ function shuffle(array) {
   return array;
 }
 
-function compareNumbers(a, b) {
-  return a - b;
-}
+/*********************** CREATES (X) AMOUNT OF BALLOTS ***************************************/
+// Used in conjunction with shuffle() to randomize the rank of the candidates
+// this simulates "numberOfBallots" people voting
 
-function vote(){
+function vote() {
   var numberOfBallots = 100000;
   
 	for (var i=0; i<numberOfBallots; i++){
@@ -40,80 +60,179 @@ function vote(){
   return ballot;
 }
 
- var countArray = 
- [0,0,4000,0,0,2996,0,0,0,0,0,0,0,0,0]
- //[10001,10001,4000,6000,12000,2996,8000,10001,7000,6000,6000,10001,9000,6000,3000];
- var electedOfficial = [];
+/*********************** MAX RANGE  ***************************************/
+// Places the last ballot index (ballot[i]) for a respective candidate into a respective array (maxBallot)
 
-function firstRound() {
+function ballotMax() {
+	var max = 0;
+		for (i=0;i<countArray.length;i++){
+			max = max + countArray[i];
+			maxBallot.push(max);
+		}	
+		//console.log(maxBallot);
+}
+
+/*********************** MIN RANGE ***************************************/
+// Places the first ballot index (ballot[i]) for a respective candidate into a respective array (minBallot)
+
+function ballotMin() {
+	var min = -(countArray[0]);
+		for (i=0;i<countArray.length;i++){
+			min = min + countArray[i];
+			minBallot.push(min);
+		}	
+		//console.log(minBallot);
+}
+
+/*********************** PICKS A BALLOT TO DISTRIBUTE ***************************************/
+// Used in conjunction with maxBallot and minBallot
+// In order for the ballot distribution process to be valid you must pick the ballot at random
+
+function randomBallot(min,max) {
+	  return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+/*********************** COUNTS 1ST PLACE VOTES ***************************************/
+// Places the first place vote of each ballot into their respective index in "countArray", for each candidate.
+
+function countVotes() {
   var ballot = vote();
-  var singledBallot = countArray;
   
  loop1:  
 	for(var i=0; i<ballot.length; i++){
+	
 		loop2:
     	for(var z=0;z<numberOfCand;z++){
-      	if(ballot[i][0]==z){ // if the first choice of a ballot is equal to z then it is added to the zth index of the countArray, (what we had before was if j==z then add to zth index of the countArray) 
+    	
+      	if(ballot[i][0]==z){ 
        			countArray[z] = countArray[z] + 1
        			break loop2;
       	}
       }
   	}
-  console.log(countArray);
+  //console.log(countArray);
 }
 
- 
+/*********************** ELECTS ***************************************/
+// If a candidate has first place votes >= the quota they are elected. (Quota being 10,001)
 
-/* not completed*/function firstElect(){
-var electOff = []; // reference array for elected officials, when distributing surplus ballots, ballots will not go to candidates already elected (example if electOff[1]==ballot[45][j] then j++)
+function elect() {
+
 	for (var k=0; k<countArray.length; k++){
 		if (countArray[k]>=10001){
 			electOff.push(k);
 			}
-	}
-	console.log(electOff);
+		}
 }
+/*********************** FIRST DISTRIBUTION  ***************************************/
+//Any candidate who has first place votes > the quota are determined to be surplus
+// The surplus is then distributed to the next choice on a random ballot 
 
-for (var j=0; j<countArray.length; j++){// if 
-	if (countArray[j]>=10001){
-		surplus = countArray[j] % 10001;
-		console.log(surplus);
+function initDistribute() {
+	
+	for (var x=0; x<countArray.length; x++) {
+	
+		if (countArray[x]>=10001) {
 		
+			surplus = countArray[x]%10001;
+			ballot.sort(compareNumbers);
+			
+			loop1:
+			for (var s=0; s<surplus; s++) {
+				
+				b = randomBallot(minBallot[x],maxBallot[x]);
+					
+				loop2:
+				for (var j=1; j<numberOfCand; j++) {
+					
+				loop3:
+				for(var z=0;z<numberOfCand;z++) {
+			
+					if(ballot[b][j]==z){ 
+				
+						if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
+					
+							countArray[z] = countArray[z] + 1
+							break loop2;
+							} 
+							else if (countArray[z]==10001){
+								electOff.push(z);
+								break loop3;
+							}
+							else { 
+								break loop3;
+							}
+						}	
+					}	
+				}
+			}
 		}
 	}
-function defeatedCand(){ // after surplus ballots have been distributed candidate with least amount of votes is declared defeated and there votes are then distributed (example 100 votes = quota, 180 votes /quota = surplus "distributable ballots")
-			minVal = Math.min.apply(null, countArray);//min value of array
-			minIndex = countArray.indexOf(minVal);//index of min value in countArray
-			countArray.splice(minIndex,1);//removes value from countArray
-			
-	loop1://just figured out how to label things and its been helping me so i continued it here
-		for(var i=0; i<ballot.length; i++){
-		 loop2:	
-			if (ballot[i][0]==minIndex){ 
-				loop3:
-  				for(var j=1;j<numberOfCand;j++){
-      			if (countArray[ballot[i][j]]!==10001){    
-      				z = ballot[i][j] 
-       				countArray[z] = countArray[z] + 1;
-       			} 
-       		}
-        }
-      }
-  	}
-  console.log(countArray);
+	return countArray;
 }
+/*********************** DECLARING A CANDIDATE DEFEATED  ***************************************/
+// after surplus ballots have been distributed candidate with least amount of votes is declared defeated
+// their votes are then distributed (example 100 votes = quota, (180 votes /quota) = surplus "distributable ballots")
+
+function defeatedCand(arr) { 
+
+	minVal = Math.min.apply(null, arr);//min value of array
+	minIndex = arr.indexOf(minVal);//index of min value in countArray
+	arr.splice(minIndex,1);//removes value from countArray
+	countArray = arr
+	defeatOff.push(minIndex);
+	loop1:
+	for (var s=0; s<minVal; s++) {
+
+		b = randomBallot(minBallot[minIndex],maxBallot[minIndex]);
+
+		loop2:
+		for (var j=1; j<numberOfCand; j++) {
+
+			loop3:
+			for(var z=0;z<numberOfCand;z++) {
+				
+				if(ballot[b][j]==z){ 
+					
+					if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
+				
+						arr[z] = arr[z] + 1
+						break loop2;
+					}
+					else if (arr[z]==10001){
+								electOff.push(z);
+								break loop3;
+							}
+	
+					else { 
+						break loop3;
+					}
+				}
+			}	
+		}
+	}
+}
+/*********************** THE WHOLE SHEBANG ***************************************/
+
+function complete() {
 
 
 
+	console.log(electOff);
+	countVotes();
+	ballotMax();
+	ballotMin();
+	elect();
 
+	while (electOff.length<9){
+		defeatedCand(initDistribute());
+		}
+	}
+complete();
 
-
-
-
-
-
-
-
-
-firstRound();
-firstElect();
+// 	countVotes();
+// 	ballotMax();
+// 	ballotMin();
+// 	elect();
+// 	initDistribute();
+// 	defeatedCand();
