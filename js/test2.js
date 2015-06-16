@@ -5,9 +5,11 @@ var numberOfCand = 15;
 var electOff = [];
 var defeatOff = [];
 var ballot = [];
-var countArray = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+var countArray = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 var maxBallot = [];
-var minBallot = [];
+var minBallot = [0];
+var distCand = [];
+var defeatCount = 0;
 
 
 
@@ -60,6 +62,16 @@ function vote() {
   return ballot;
 }
 
+/*********************** Replicates countArray ***************************************/
+
+function createArr() {
+	arr =[]
+	for (i=0; i<countArray.length; i++){
+		arr.push(countArray[i]);
+	}
+	return arr;
+}
+
 /*********************** MAX RANGE  ***************************************/
 // Places the last ballot index (ballot[i]) for a respective candidate into a respective array (maxBallot)
 
@@ -67,7 +79,7 @@ function ballotMax() {
 	var max = 0;
 		for (i=0;i<countArray.length;i++){
 			max = max + countArray[i];
-			maxBallot.push(max);
+			maxBallot.push(max-1);
 		}	
 		//console.log(maxBallot);
 }
@@ -76,12 +88,12 @@ function ballotMax() {
 // Places the first ballot index (ballot[i]) for a respective candidate into a respective array (minBallot)
 
 function ballotMin() {
-	var min = -(countArray[0]);
-		for (i=0;i<countArray.length;i++){
-			min = min + countArray[i];
+	var min = 100000;
+		for (var i=countArray.length-1; i>0; i--){
+			min = min - countArray[i];
 			minBallot.push(min);
 		}	
-		//console.log(minBallot);
+		minBallot.sort(compareNumbers);
 }
 
 /*********************** PICKS A BALLOT TO DISTRIBUTE ***************************************/
@@ -119,7 +131,7 @@ function countVotes() {
 function elect() {
 
 	for (var k=0; k<countArray.length; k++){
-		if (countArray[k]>=10001){
+		if (countArray[k]>=10001 && electOff.indexOf(k)==-1){
 			electOff.push(k);
 			}
 		}
@@ -132,7 +144,7 @@ function initDistribute() {
 	
 	for (var x=0; x<countArray.length; x++) {
 	
-		if (countArray[x]>=10001) {
+		if (countArray[x]>=10001 && distCand.indexOf(x)==-1) {
 		
 			surplus = countArray[x]%10001;
 			ballot.sort(compareNumbers);
@@ -149,16 +161,18 @@ function initDistribute() {
 				for(var z=0;z<numberOfCand;z++) {
 			
 					if(ballot[b][j]==z){ 
+					
+							if (countArray[z]==10001 && electOff.indexOf(z)==-1){
+								electOff.push(z);
+								break loop3;
+							}
 				
-						if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
+							else if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
 					
 							countArray[z] = countArray[z] + 1
 							break loop2;
 							} 
-							else if (countArray[z]==10001){
-								electOff.push(z);
-								break loop3;
-							}
+							
 							else { 
 								break loop3;
 							}
@@ -168,19 +182,19 @@ function initDistribute() {
 			}
 		}
 	}
-	return countArray;
 }
 /*********************** DECLARING A CANDIDATE DEFEATED  ***************************************/
 // after surplus ballots have been distributed candidate with least amount of votes is declared defeated
 // their votes are then distributed (example 100 votes = quota, (180 votes /quota) = surplus "distributable ballots")
 
-function defeatedCand(arr) { 
-
-	minVal = Math.min.apply(null, arr);//min value of array
-	minIndex = arr.indexOf(minVal);//index of min value in countArray
-	arr.splice(minIndex,1);//removes value from countArray
-	countArray = arr
+function defeatedCand() { 
+	
+	gradientArr = createArr();
+	gradientArr.sort(compareNumbers);
+	minVal = gradientArr[defeatCount];//min value of array
+	minIndex = countArray.indexOf(minVal);//index of min value in countArray
 	defeatOff.push(minIndex);
+	
 	loop1:
 	for (var s=0; s<minVal; s++) {
 
@@ -194,15 +208,12 @@ function defeatedCand(arr) {
 				
 				if(ballot[b][j]==z){ 
 					
-					if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
+					 if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
 				
-						arr[z] = arr[z] + 1
+						countArray[z] = countArray[z] + 1
 						break loop2;
+					
 					}
-					else if (arr[z]==10001){
-								electOff.push(z);
-								break loop3;
-							}
 	
 					else { 
 						break loop3;
@@ -211,6 +222,7 @@ function defeatedCand(arr) {
 			}	
 		}
 	}
+	defeatCount++;
 }
 /*********************** THE WHOLE SHEBANG ***************************************/
 
@@ -222,12 +234,14 @@ function complete() {
 	countVotes();
 	ballotMax();
 	ballotMin();
-	elect();
 
 	while (electOff.length<9){
-		defeatedCand(initDistribute());
+		elect();
+		initDistribute()
+		defeatedCand();
 		}
 	}
+
 complete();
 
 // 	countVotes();
