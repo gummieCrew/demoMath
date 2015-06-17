@@ -13,11 +13,15 @@ var defeatCount = 0;
 
 
 
-/******** USED TO SORT BALLOTS PROPERLY ****************************************/
+/******** REFERENCE ARRAY ****************************************/
 // arr = [2,11,1,3] arr.sort() = [1,11,2,3], arr.sort(compareNumbers) = [1,2,3,11]
 
-function compareNumbers(a, b) {
-  	return a - b;
+function ballotArray() {
+		temp_arr = [];
+  	for (i=0; i<countArray.length; i++){
+			temp_arr.push(i);
+		}
+		return temp_arr.sort()
 }
 
 /*********************** MAKES RANDOM BALLOT***********************************/
@@ -62,7 +66,7 @@ function vote() {
   return ballot;
 }
 
-/*********************** Replicates countArray ***************************************/
+/*********************** REPLICATES ARRAY ***************************************/
 
 function createArr() {
 	arr =[]
@@ -72,28 +76,65 @@ function createArr() {
 	return arr;
 }
 
+/*********************** COMPARES NUMBERS ***************************************/
+
+function compareNumbers(a,b) {
+    return a - b;
+}
+
+/*********************** REARANGES ***************************************/
+
+function rearrange(arr) {
+	
+	temp_arrA = [];
+	temp_arrB = [] 
+	
+	for (i=0; i<countArray.length; i++){
+		temp_arrA.push(i);
+		temp_arrB.push(arr[i])
+		
+		}
+		
+		temp_arrA.sort();
+		
+	for (i=0; i<countArray.length; i++){	
+		
+		a = temp_arrA[i];
+		b = temp_arrB[a];
+		c = temp_arrB[i];
+		d = temp_arrA.indexOf(i);
+		arr[i]=b;
+		arr[d]=c;
+		}
+}
+
 /*********************** MAX RANGE  ***************************************/
 // Places the last ballot index (ballot[i]) for a respective candidate into a respective array (maxBallot)
 
+
 function ballotMax() {
 	var max = 0;
-		for (i=0;i<countArray.length;i++){
-			max = max + countArray[i];
+		for (var i=0;i<countArray.length; i++){
+		
+			temp_arr = ballotArray();
+			a = temp_arr[i]
+			max = max + countArray[a];
 			maxBallot.push(max-1);
 		}	
-		//console.log(maxBallot);
 }
 
 /*********************** MIN RANGE ***************************************/
 // Places the first ballot index (ballot[i]) for a respective candidate into a respective array (minBallot)
 
 function ballotMin() {
-	var min = 100000;
-		for (var i=countArray.length-1; i>0; i--){
-			min = min - countArray[i];
+	var min = 0;
+		for (var i=0;i<countArray.length-1; i++){
+		
+			temp_arr = ballotArray();
+			a = temp_arr[i]
+			min = min + countArray[a];
 			minBallot.push(min);
 		}	
-		minBallot.sort(compareNumbers);
 }
 
 /*********************** PICKS A BALLOT TO DISTRIBUTE ***************************************/
@@ -147,12 +188,13 @@ function initDistribute() {
 		if (countArray[x]>=10001 && distCand.indexOf(x)==-1) {
 		
 			surplus = countArray[x]%10001;
-			ballot.sort(compareNumbers);
 			
 			loop1:
 			for (var s=0; s<surplus; s++) {
 				
-				b = randomBallot(minBallot[x],maxBallot[x]);
+				temp_arr = ballotArray();
+				a = temp_arr.indexOf(i)
+				b = randomBallot(minBallot[a],maxBallot[a]);
 					
 				loop2:
 				for (var j=1; j<numberOfCand; j++) {
@@ -197,8 +239,10 @@ function defeatedCand() {
 	
 	loop1:
 	for (var s=0; s<minVal; s++) {
-
-		b = randomBallot(minBallot[minIndex],maxBallot[minIndex]);
+		
+		temp_arr = ballotArray();
+		a = temp_arr.indexOf(minIndex)
+		b = randomBallot(minBallot[a],maxBallot[a]);
 
 		loop2:
 		for (var j=1; j<numberOfCand; j++) {
@@ -234,6 +278,7 @@ function complete() {
 	countVotes();
 	ballotMax();
 	ballotMin();
+	ballot.sort();
 
 	while (electOff.length<9){
 		elect();
@@ -242,7 +287,7 @@ function complete() {
 		}
 	}
 
-complete();
+//complete();
 
 // 	countVotes();
 // 	ballotMax();
