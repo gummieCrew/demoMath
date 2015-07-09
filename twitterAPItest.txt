@@ -1,0 +1,13 @@
+$(document).ready(function (){
+	function () {
+		url = https://stream.twitter.com/1.1/statuses/filter.json;
+		follow = ?;
+		track = ?;
+		locations = ?;
+		delimited = ?; //length delimited
+		stall_warnings; //whether stall warnings should be delivered* not sure what this means*
+		
+		$.getJSON(url, 
+	}
+	
+})

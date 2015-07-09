@@ -2,20 +2,19 @@
 /*********************** VARIABLES ***************************************/
 
 var numberOfCand = 15;
+var numberOfSeats = 9;
 var electOff = [];
 var defeatOff = [];
 var ballot = [];
 var countArray = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 var maxBallot = [];
 var minBallot = [0];
-var distCand = [];
+var defCand = [];
 var defeatCount = 0;
-
-
+var numberOfBallots = 100000;
 
 /******** REFERENCE ARRAY ****************************************/
-// arr = [2,11,1,3] arr.sort() = [1,11,2,3], arr.sort(compareNumbers) = [1,2,3,11]
-
+// arr = [2,11,1,3] arr.sort() = [1,11,2,3] // we cannot sort the ballots any other way...
 function ballotArray() {
 		temp_arr = [];
   	for (i=0; i<countArray.length; i++){
@@ -50,30 +49,31 @@ function shuffle(array) {
 // Used in conjunction with shuffle() to randomize the rank of the candidates
 // this simulates "numberOfBallots" people voting
 
-function vote() {
-  var numberOfBallots = 100000;
-  
-	for (var i=0; i<numberOfBallots; i++){
-    var arr = [];
-
-    for(var j=0;j<numberOfCand;j++){
-      arr[j] = j;
-    } 
-
-    ballot[i] = shuffle(arr);
-	}
-  
+function vote(nB,nC) { //nB = numberOfBallots, nC = numberOfCand
+  var arr = [];
+		for (var i=0; i<nB; i++){
+			for(var j=0;j<nC;j++){
+      	arr[j] = j;
+    	} 
+		ballot[i] = shuffle(arr);
+		}
   return ballot;
 }
 
 /*********************** REPLICATES ARRAY ***************************************/
 
-function createArr() {
+function createArr(cA) { //cA = countArray
 	arr =[]
-	for (i=0; i<countArray.length; i++){
-		arr.push(countArray[i]);
+	for (i=0; i<cA.length; i++){
+		arr.push(cA[i]);
 	}
 	return arr;
+}
+/*********************** QUOTA ***************************************/
+
+function quota(nB,nS) {
+	q = (nB/(nS+1))+1;
+	return q;
 }
 
 /*********************** COMPARES NUMBERS ***************************************/
@@ -84,12 +84,12 @@ function compareNumbers(a,b) {
 
 /*********************** REARANGES ***************************************/
 
-function rearrange(arr) {
+function rearrange(arr,cA) {
 	
 	temp_arrA = [];
 	temp_arrB = [] 
 	
-	for (i=0; i<countArray.length; i++){
+	for (i=0; i<cA.length; i++){
 		temp_arrA.push(i);
 		temp_arrB.push(arr[i])
 		
@@ -97,7 +97,7 @@ function rearrange(arr) {
 		
 		temp_arrA.sort();
 		
-	for (i=0; i<countArray.length; i++){	
+	for (i=0; i<cA.length; i++){	
 		
 		a = temp_arrA[i];
 		b = temp_arrB[a];
@@ -109,31 +109,28 @@ function rearrange(arr) {
 }
 
 /*********************** MAX RANGE  ***************************************/
-// Places the last ballot index (ballot[i]) for a respective candidate into a respective array (maxBallot)
-
-
-function ballotMax() {
+/* ballots have been arranged by first place votes [0,1,10,11,12,13,14,2,3,4,5,6,7,8,9],
+this function creates an array "maxBallot", of the uppermost range of indexes for this ^ particular array "ballotArray" */ 
+function ballotMax(cA) {
 	var max = 0;
-		for (var i=0;i<countArray.length; i++){
-		
-			temp_arr = ballotArray();
-			a = temp_arr[i]
-			max = max + countArray[a];
-			maxBallot.push(max-1);
+		for (var i=0;i<cA.length; i++){
+			temp_arr = ballotArray(); // makes an array replicating the order of the ballots
+			a = temp_arr[i] // stores the index of ballot in a variable
+			max = max + cA[a]; // uses "a" as index of array to add to counter variable "max"
+			maxBallot.push(max-1); // pushes the uppermost value of a ballot place into array
 		}	
 }
 
 /*********************** MIN RANGE ***************************************/
 // Places the first ballot index (ballot[i]) for a respective candidate into a respective array (minBallot)
 
-function ballotMin() {
+function ballotMin(cA) {
 	var min = 0;
-		for (var i=0;i<countArray.length-1; i++){
-		
+		for (var i=0;i<cA.length-1; i++){ //always starts at index zero
 			temp_arr = ballotArray();
 			a = temp_arr[i]
-			min = min + countArray[a];
-			minBallot.push(min);
+			min = min + cA[a];
+			minBallot.push(min);// same as "ballotMax" expect pushes the lowermost value of a ballot place into array
 		}	
 }
 
@@ -142,38 +139,35 @@ function ballotMin() {
 // In order for the ballot distribution process to be valid you must pick the ballot at random
 
 function randomBallot(min,max) {
-	  return Math.floor(Math.random()*(max-min+1)+min);
+	  return Math.floor(Math.random()*(max-min+1)+min); 
 }
 
 /*********************** COUNTS 1ST PLACE VOTES ***************************************/
 // Places the first place vote of each ballot into their respective index in "countArray", for each candidate.
 
-function countVotes() {
-  var ballot = vote();
-  
- loop1:  
-	for(var i=0; i<ballot.length; i++){
-	
-		loop2:
-    	for(var z=0;z<numberOfCand;z++){
-    	
-      	if(ballot[i][0]==z){ 
-       			countArray[z] = countArray[z] + 1
-       			break loop2;
-      	}
-      }
-  	}
-  //console.log(countArray);
+function countVotes(b,nC,cA) {
+  var b = vote();
+	loop1:  
+		for(var i=0; i<b.length; i++){
+			loop2:
+				for(var z=0;z<nC;z++){ 	
+					if(b[i][0]==z){ 
+							cA[z] = cA[z] + 1
+							break loop2;
+					}
+				}
+			}
+		//console.log(countArray);
 }
 
 /*********************** ELECTS ***************************************/
 // If a candidate has first place votes >= the quota they are elected. (Quota being 10,001)
 
-function elect() {
+function elect(cA,eO,nB,nS) { //eO = electOff
 
-	for (var k=0; k<countArray.length; k++){
-		if (countArray[k]>=10001 && electOff.indexOf(k)==-1){
-			electOff.push(k);
+	for (var k=0; k<cA.length; k++){
+		if (cA[k]>=quota(nB,nS) && eO.indexOf(k)==-1){
+			eO.push(k);
 			}
 		}
 }
@@ -181,37 +175,37 @@ function elect() {
 //Any candidate who has first place votes > the quota are determined to be surplus
 // The surplus is then distributed to the next choice on a random ballot 
 
-function initDistribute() {
+function initDistribute(b,cA,eO,dO,nB,nS,nC,dC,mnB,mxB) {
 	
-	for (var x=0; x<countArray.length; x++) {
+	for (var x=0; x<cA.length; x++) {
 	
-		if (countArray[x]>=10001 && distCand.indexOf(x)==-1) {
+		if (cA[x]>=quota(nB,nS) && dC.indexOf(x)==-1) {
 		
-			surplus = countArray[x]%10001;
+			surplus = cA[x]%quota(nB,nS);
 			
 			loop1:
 			for (var s=0; s<surplus; s++) {
 				
 				temp_arr = ballotArray();
-				a = temp_arr.indexOf(i)
-				b = randomBallot(minBallot[a],maxBallot[a]);
+				a = temp_arr.indexOf(x)
+				c = randomBallot(mnB[a],mxB[a]);
 					
 				loop2:
-				for (var j=1; j<numberOfCand; j++) {
+				for (var j=1; j<nC; j++) {
 					
 				loop3:
-				for(var z=0;z<numberOfCand;z++) {
+				for(var z=0;z<nC;z++) {
 			
-					if(ballot[b][j]==z){ 
+					if(b[c][j]==z){ 
 					
-							if (countArray[z]==10001 && electOff.indexOf(z)==-1){
-								electOff.push(z);
+							if (cA[z]==quota(nB,nS) && eO.indexOf(z)==-1){
+								eO.push(z);
 								break loop3;
 							}
 				
-							else if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
+							else if(eO.indexOf(z)==-1 && dO.indexOf(z)==-1) {
 					
-							countArray[z] = countArray[z] + 1
+							cA[z] = cA[z] + 1
 							break loop2;
 							} 
 							
@@ -229,32 +223,32 @@ function initDistribute() {
 // after surplus ballots have been distributed candidate with least amount of votes is declared defeated
 // their votes are then distributed (example 100 votes = quota, (180 votes /quota) = surplus "distributable ballots")
 
-function defeatedCand() { 
+function defeatedCand(b,cA,dCo,dO,mnB,mxB,nC,eO) { 
 	
 	gradientArr = createArr();
 	gradientArr.sort(compareNumbers);
-	minVal = gradientArr[defeatCount];//min value of array
-	minIndex = countArray.indexOf(minVal);//index of min value in countArray
-	defeatOff.push(minIndex);
+	minVal = gradientArr[dCo];//min value of array
+	minIndex = cA.indexOf(minVal);//index of min value in countArray
+	dO.push(minIndex);
 	
 	loop1:
 	for (var s=0; s<minVal; s++) {
 		
 		temp_arr = ballotArray();
 		a = temp_arr.indexOf(minIndex)
-		b = randomBallot(minBallot[a],maxBallot[a]);
+		c = randomBallot(mnB[a],mxB[a]);
 
 		loop2:
-		for (var j=1; j<numberOfCand; j++) {
+		for (var j=1; j<nC; j++) {
 
 			loop3:
-			for(var z=0;z<numberOfCand;z++) {
+			for(var z=0;z<nC;z++) {
 				
-				if(ballot[b][j]==z){ 
+				if(b[c][j]==z){ 
 					
-					 if(electOff.indexOf(z)==-1 && defeatOff.indexOf(z)==-1) {
+					 if(eO.indexOf(z)==-1 && dO.indexOf(z)==-1) {
 				
-						countArray[z] = countArray[z] + 1
+						cA[z] = cA[z] + 1
 						break loop2;
 					
 					}
@@ -266,7 +260,7 @@ function defeatedCand() {
 			}	
 		}
 	}
-	defeatCount++;
+	dCo++;
 }
 /*********************** THE WHOLE SHEBANG ***************************************/
 
@@ -288,6 +282,7 @@ function complete() {
 	}
 
 //complete();
+console.log(electOff);
 
 // 	countVotes();
 // 	ballotMax();

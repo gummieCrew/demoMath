@@ -1,5 +1,35 @@
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 
+/* PPG Colors 
+   ========================================================================== */
+/*
+
+Color Ratio: 6:3:1
+
+Burnt red: rgb(203, 72, 76), #cb484c // bright red
++Burnt red: rgb(219, 55, 60),	#db373c // brighter red
+
+Blue Tang: rgb(42, 74, 111), #2a4a6f // deep blue
++Blue Tang: rgb(33, 73, 119), #214977 // blue
+
+Rainbow Bright:	rgb(36, 99, 173), #2463ad // bright blue
++Rainbow Bright: rgb(18, 97, 190), #1261be // brighter blue
+
+Parchment Paper: rgb(242, 232, 216), #f2e8d8 // beige
+
+Thin Ice: rgb(218, 219, 219), #dadbdb // lighter grey
+
+Gypsum:	rgb(238, 237, 229),	#eeede5 // light grey
+
+Quest: rgb(188, 192, 191), #bcc0bf // med grey
+
+Dark as Night: rgb(24, 29, 29), #181d1d // darker grey
+
+
+
+*/
+
+
 /**
  * 1. Set default font family to sans-serif.
  * 2. Prevent iOS text size adjust after orientation change, without disabling
