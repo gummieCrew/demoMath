@@ -62,9 +62,9 @@ function vote(nB,nC) { //nB = numberOfBallots, nC = numberOfCand
 
 /*********************** REPLICATES ARRAY ***************************************/
 
-function createArr(cA) { //cA = countArray
+function createArr() { //cA = countArray
 	arr =[]
-	for (i=0; i<cA.length; i++){
+	for (i=0; i<countArray.length; i++){
 		arr.push(cA[i]);
 	}
 	return arr;
