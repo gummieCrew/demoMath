@@ -3,6 +3,7 @@
 
 var numberOfCand = 15;
 var numberOfSeats = 9;
+var numberOfBallots = 100000;
 var electOff = [];
 var defeatOff = [];
 var ballot = [];
@@ -11,7 +12,6 @@ var maxBallot = [];
 var minBallot = [0];
 var defCand = [];
 var defeatCount = 0;
-var numberOfBallots = 100000;
 
 /******** REFERENCE ARRAY ****************************************/
 // arr = [2,11,1,3] arr.sort() = [1,11,2,3] // we cannot sort the ballots any other way...
@@ -21,6 +21,16 @@ function ballotArray() {
 			temp_arr.push(i);
 		}
 		return temp_arr.sort()
+}
+
+/*********************** Temporary ARRAY ***************************************/
+
+function tempArr() { //cA = countArray
+	var arr = [];
+	for (i=0; i<numberOfCand; i++){
+		arr.push(i);
+	}
+	return arr;
 }
 
 /*********************** MAKES RANDOM BALLOT***********************************/
@@ -45,22 +55,22 @@ function shuffle(array) {
   return array;
 }
 
-/*********************** CREATES (X) AMOUNT OF BALLOTS ***************************************/
+/*********************** CREATES (X) AMOUNT OF BALLOTS ****************************************/
 // Used in conjunction with shuffle() to randomize the rank of the candidates
 // this simulates "numberOfBallots" people voting
 
 function vote() { //nB = numberOfBallots, nC = numberOfCand
-  var arr = [];
-		for (var i=0; i<numberOfBallots; i++){
-			for(var j=0;j<numberOfCand;j++){
-      	arr[j] = j;
-    	} 
-		ballot[i] = shuffle(arr);
+
+	for (var i=0; i<numberOfBallots; i++){
+	var temp = tempArr();
+	ballot[i] = shuffle(temp);
+
 		}
   return ballot;
 }
 
-/*********************** REPLICATES ARRAY ***************************************/
+
+/*********************** REPLICATES countARRAY ***************************************/
 
 function createArr() { //cA = countArray
 	arr =[]
@@ -263,7 +273,6 @@ function defeatedCand() {
 	defeatCount++;
 }
 /*********************** THE WHOLE SHEBANG ***************************************/
-
 function complete() {
 	console.log(electOff);
 	countVotes();
@@ -277,7 +286,41 @@ function complete() {
 		defeatedCand();
 		}
 		console.log(electOff);
+}
+
+/**CONRAD quick code to be moved to a gui js file for handling front end stuff*/
+
+/*To be moved, but will start up the code on the page*/
+window.onload = function() {
+	$('.start_algo').on('click', startAlgo);
+}
+
+/*Button init for algo stuff*/
+function startAlgo(){
+  //Re-init vars
+  electOff = [];
+  defeatOff = [];
+  ballot = [];
+  countArray = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  maxBallot = [];
+  minBallot = [0];
+  defCand = [];
+  defeatCount = 0;
+
+	numberOfCand = parseInt($('.candidates_input').val());
+	numberOfBallots = parseInt($('.ballot_input').val());
+	numberOfSeats = parseInt($('.seats_input').val());
+	
+	if(!isNaN(numberOfCand) &&
+  !isNaN(numberOfBallots) &&
+  !isNaN(numberOfSeats)){
+		complete();
+	} else{
+	  console.error("The inputs for the algorithm are not all numbers!");
 	}
+}
+
+
 
 //complete();
 console.log(electOff);

@@ -12,21 +12,24 @@
 		<meta name="keywords" content="" />
 		<link href='http://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
 		<!--[if lte IE 8]><script src="js/html5shiv.js"></script><![endif]-->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="lib/jquery-1.11.3.min.js"></script>
 		<script src="js/skel.min.js"></script>
 		<script src="js/skel-panels.min.js"></script>
 		<script src="js/init.js"></script>
-		<script src="js/test2.js"></script>
+		<script src="lib/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+		<script src="js/test2-conrad.js"></script>
+		
     //****** THIS SCRIPT IS WHERE MY API KEY IS (../api/js?key="API KEY") *****************//
 
-    <script type="text/javascript"
+    <!-- 
+<script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCqNhFnkjKjKtnyrRcGRPYT90u2XZIaYcc">
     </script>
     <style type="text/css">
       #map-canvas { position: relative; height: 100%; margin: 0; padding: 0;}
     </style>
     <script type="text/javascript">
-      function initialize() {
+      /*function initialize() {
         var mapOptions = {
           center: { lat: -34.397, lng: 150.644},
           zoom: 8
@@ -34,11 +37,13 @@
         var map = new google.maps.Map(document.getElementById('map-canvas'),
             mapOptions);
       }
-      google.maps.event.addDomListener(window, 'load', initialize);
+      google.maps.event.addDomListener(window, 'load', initialize);*/
     </script>
+ -->
 		<noscript>
 			<link rel="stylesheet" href="../css/skel-noscript.css" />
 			<link rel="stylesheet" href="../css/style.css" />
+			<link rel="stylesheet" href="../lib/boostrap-3.3.5/css/bootstrap.min.css"/>
 		</noscript>
 		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
 		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie/v9.css" /><![endif]-->
@@ -71,6 +76,12 @@
 			
 	<!-- Main -->
 	<div id="container">
+	    <div class="algo_div">
+				<input class="candidates_input" type="number" placeholder="# Candidates"></input>
+				<input class="ballot_input" type="number" placeholder="# Ballots"></input>
+				<input class="seats_input" type="number" placeholder="# Seats"></input>
+				<button class="btn btn-lg start_algo">Start Algorithm</button>
+			</div> 
 			<span id="gmaTitle">Google Maps API, Runs STV Algorithm (test2.js)</span>
 			<div id="map-canvas"></div>
 	</div>
